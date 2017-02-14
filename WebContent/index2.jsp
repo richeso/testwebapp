@@ -10,32 +10,16 @@
 <script src="http://trirand.com/blog/jqgrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
 <script src="http://trirand.com/blog/jqgrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
 <script type="text/javascript">
-
- jQuery.extend(
-        jQuery.jgrid.del, {
-            ajaxDelOptions: { contentType: "application/json" },
-            recreateForm: true,
-            serializeDelData: function(postData) {
-                console.log("deleting "+postData.id);
-                return JSON.stringify(postData);
-            },
-            afterSubmit: function (response, postdata) {
-                var res = jQuery.parseJSON(response.responseText);
-                return [true, "", res.d];
-            }
-        }
-    );
 jQuery.extend(
         jQuery.jgrid.edit, {
             ajaxEditOptions: { contentType: "application/json" },
             recreateForm: true,
-            closeAfterAdd:true, closeAfterEdit:true, 
             serializeEditData: function(postData) {
                 return JSON.stringify(postData);
             },
             afterSubmit: function (response, postdata) {
                 var res = jQuery.parseJSON(response.responseText);
-                return [true, "", ""];
+                return [true, "", res.d];
             }
         }
     );
@@ -80,7 +64,6 @@ $(document)
                                 },
                                 editurl : "http://localhost:8080/testwebapp/rest/service/controller",
                                 datatype : 'json'
-                       
                             });
             jQuery("#list").jqGrid('navGrid', '#pager', {
                 edit : true,
@@ -94,7 +77,7 @@ $(document)
 </head>
 
 <div align="center">
-<h1> Honda Canada Azure Stack Test Web App</h1>
+<h1> CH Azure Test Web App</h1>
 <hr>
 <div align="left">
 <ul>

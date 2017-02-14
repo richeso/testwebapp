@@ -99,8 +99,9 @@ public class SimpleRESTService {
     private void deleteElement(JsonObject obj) {
 
         String id = obj.getString("id");
+        Long personId = new Long(id);
         Query query = em.createQuery("delete FROM Person where id = :id");
-        query.setParameter("id", id);
+        query.setParameter("id", personId);
         query.executeUpdate();
         System.out.println("Deleted " + obj);
 
