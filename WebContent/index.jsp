@@ -1,25 +1,53 @@
-<html xmlns="http://www.w3.org/1999/xhtml">
-<head>
-<title>CH Testing Azure Stack with Jboss Community and Postgres DB</title>
- 
-<link rel="stylesheet" type="text/css" media="screen" href="http://ajax.googleapis.com/ajax/libs/jqueryui/1.8.14/themes/base/jquery-ui.css" />
-<link rel="stylesheet" type="text/css" media="screen" href="http://trirand.com/blog/jqgrid/themes/ui.jqgrid.css" />
-  
-<script src="//ajax.googleapis.com/ajax/libs/jquery/1.11.1/jquery.min.js"></script>
- 
-<script src="http://trirand.com/blog/jqgrid/js/i18n/grid.locale-en.js" type="text/javascript"></script>
-<script src="http://trirand.com/blog/jqgrid/js/jquery.jqGrid.min.js" type="text/javascript"></script>
+<!DOCTYPE html>
+ <html lang="en">
+ <head>
+  <meta charset="UTF-8">
+  <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/cupertino/jquery-ui.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.13.6/css/ui.jqgrid.min.css">
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.9.1/jquery.min.js"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/free-jqgrid/4.13.6/js/jquery.jqgrid.min.js"></script>
+  <title>Azure Test Web App </title>
+</head>
+<body>
+  <div align="center" class="container" style="padding:50px 250px;">
+    <h1> Honda Canada Azure Stack Test Web App</h1>
+		<hr>
+		<div align="left">
+		<ul>
+		<li>Jboss Community Edition - Wildfly 10.0</li> 
+		<li>PostGres Database</li>
+		<li>Rest Web Services</li>
+		<li>SPA Architecture using JavaScript, JQuery</li>
+		</ul>
+		</div>
+		<hr>
+		<br>
+	<table id="contacts" class="display" cellspacing="0" width="100%">
+    </table>
+	<div id="pager"></div>
+  </div>
+</body>
+</html>
 <script type="text/javascript">
-jQuery.extend(
+
+ jQuery.extend(
         jQuery.jgrid.del, {
             ajaxDelOptions: { contentType: "application/json" },
             recreateForm: true,
             serializeDelData: function(postData) {
-                console.log("deleting "+postData.id);
+                console.log("In SerializeDelData: Serializing and Deletion of: ");
+                console.log(postData);
                 return JSON.stringify(postData);
             },
             afterSubmit: function (response, postdata) {
-                //var res = jQuery.parseJSON(response.responseText);
+                console.log("In Jquery Extended Delete after Submit Function: ");
+                console.log("------------------------------------");
+                console.log("Response: ");
+                console.log(response);
+                console.log("Postdata: ");
+                console.log(postdata);
+               //var res = jQuery.parseJSON(response.responseText);
+               //return [true, "", res.d];
                 return [true, "", ""];
             }
         }
@@ -30,10 +58,20 @@ jQuery.extend(
             recreateForm: true,
             closeAfterAdd:true, closeAfterEdit:true, 
             serializeEditData: function(postData) {
+                console.log("In SerializeEditData: Serializing and Create/Update of: ");
+                console.log(postData);
                 return JSON.stringify(postData);
             },
             afterSubmit: function (response, postdata) {
-                //var res = jQuery.parseJSON(response.responseText);
+            console.log("In Jquery Extended Edit After Submit Function: ");
+                console.log("------------------------------------");
+                console.log("Response: ");
+                console.log(response);
+                console.log("Postdata: ");
+                console.log(postdata);
+               
+               //var res = jQuery.parseJSON(response.responseText);
+               //return [true, "", res.d];
                 return [true, "", ""];
             }
         }
@@ -42,66 +80,132 @@ jQuery.extend(
 $(document)
 .ready(
         function() {
-            $("#list")
+            $("#contacts")
                     .jqGrid(
-                            {
+                            {   editable: true,
                                 url : 'http://localhost:8080/testwebapp/rest/service',
+                                editurl : "http://localhost:8080/testwebapp/rest/service/controller",
                                 datatype : 'json',
-                                mtype : 'GET',
-                                colNames : [ 'name', 'Last Name',
+                                colNames : [ 'id', 'name', 'Last Name',
                                         'address'],
                                 colModel : [ {
+                                    name : 'id',
+                                    index : 'contacts_id',
+                                    width : 100,
+                                    editable : false
+                                }, 
+                                {
                                     name : 'name',
                                     index : 'name',
-                                    width : 150,
+                                    width : 250,
                                     editable : true
-                                }, {
+                                },{
                                     name : 'surname',
                                     index : 'surname',
-                                    width : 150,
+                                    width : 250,
                                     editable : true
                                 }, {
                                     name : 'address',
                                     index : 'address',
-                                    width : 200,
+                                    width : 400,
                                     editable : true
                                 } ],
                                 pager : '#pager',
                                 rowNum : 10,
                                 rowList : [ 10, 20, 30 ],
-                                sortname : 'invid',
-                                sortorder : 'desc',
+                                sortname : 'contacts_id',
+                                sortorder : 'asc',
                                 viewrecords : true,
                                 gridview : true,
-                                caption : 'Data Report',
+                                caption : 'Contact Names and Addresses',
                                 jsonReader : {
                                     repeatitems : false,
-                                },
-                                editurl : "http://localhost:8080/testwebapp/rest/service/controller",
-                                datatype : 'json'
+                                }                 
                             });
-            jQuery("#list").jqGrid('navGrid', '#pager', {
-                edit : true,
-                add : true,
-                del : true,
-                search : true,
-                closeAfterAdd: true,
-     			closeAfterEdit: true,
-     			closeAfterDelete: true,
-     			reloadAfterSubmit: true
-            });
-        });
-    
-</script>
-</head>
+   $("#contacts").jqGrid('navGrid','#pager',
+	{
+		edit:true, edittitle: "Edit Contact", width: 500,
+		add:true, addtitle: "Add Contact", width: 500,
+		del:true,
+		search: true,
+		refresh: true,
+		view:true
+	},
+    //Edit Options. save key parameter will keybind the Enter key to submit.
+	{
+		editCaption: "Edit Contact",
+		edittext: "Edit",
+		closeOnEscape: true,
+		closeAfterAdd: true,
+		closeAfterEdit: true,
+		savekey: [true, 13],
+		errorTextFormat: commonError,
+		width: "500",
+		reloadAfterSubmit: true,
+		bottominfo: "Fields marked with (*) are required",
+		top: "60",
+		left: "5",
+		right: "5",
+		onclickSubmit: function (response, postdata) {
+			//call edit button
+			EditContact(postdata);
+		}
+	},
+	//add Options. save key parameter will keybind the Enter key to submit.
+	{
+		addCaption: "Add Contact",
+		addtext: "Add",
+		closeOnEscape: true,
+		closeAfterAdd: true,
+		closeAfterEdit: true,
+		savekey: [true, 13],
+		errorTextFormat: commonError,
+		width: "500",
+		reloadAfterSubmit: true,
+		bottominfo: "Fields marked with (*) are required",
+		top: "60",
+		left: "5",
+		right: "5",
+		onclickSubmit: function (response, postdata) {
+			AddContact(postdata);
+		}
+	},
+	//delete Options. save key parameter will keybind the Enter key to submit.
+	{
+		deleteCaption: "Delete Contact",
+		deletetext: "Delete",
+		closeOnEscape: true,
+		closeAfterEdit: true,
+		savekey: [true, 13],
+		errorTextFormat: commonError,
+		width: "500",
+		reloadAfterSubmit: true,
+		bottominfo: "Fields marked with (*) are required",
+		top: "60",
+		left: "5",
+		right: "5",
+		onclickSubmit: function (response, postdata) {
+			DeleteContact(postdata);
+		}
+	}
 
-<body>
-    <table id="list">
-        <tr>
-            <td />
-        </tr>
-    </table>
-    <div id="pager"></div>
-</body>
-</div>
+
+	);
+	function commonError(data) {
+        return "Error Occured during Operation. Please try again";
+    }
+	function EditContact(params) {
+		//Here you need to define ajax call for update records to server
+		console.log(params);
+	}
+	function AddContact(params) {
+		//Here you need to define ajax call for insert records to server
+		console.log(params);
+	}
+	function DeleteContact(params) {
+		//Here you need to define ajax call for delete records to server
+		console.log(params);
+	}
+  });
+</script>
 </html>
